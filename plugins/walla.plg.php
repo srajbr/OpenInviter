@@ -1,13 +1,19 @@
 <?php
+/**
+ * Modified by Samiran Raj Boro
+ * https://github.com/srajbr/OpenInviter
+ */
+
 $_pluginInfo=array(
 	'name'=>'Walla',
-	'version'=>'1.0.4',
+	'version'=>'1.0.5',
 	'description'=>"Get the contacts from a Walla mail account",
 	'base_version'=>'1.6.5',
 	'type'=>'email',
-	'check_url'=>'http://friends.walla.co.il/?tsscript=login&theme=&ReturnURL=http://mail.walla.co.il/index.cgi',
-	'requirement'=>'user',
+	'check_url'=>'http://friends.walla.co.il/?tsscript=login&theme=&ReturnURL=http://newaddress.walla.co.il/ts.cgi',
+	'requirement'=>'email',
 	'allowed_domains'=>false,
+	'detected_domains'=>array('/(walla.com)/i','/(walla.co.il)/i'),
 	'imported_details'=>array('first_name','email_1'),
 	);
 /**
@@ -49,7 +55,7 @@ class walla extends openinviter_base
 		$this->service_password=$pass;
 		if (!$this->init()) return false;
 		
-		$res=$this->get("http://friends.walla.co.il/?tsscript=login&theme=&ReturnURL=http://mail.walla.co.il/index.cgi",true);
+		$res=$this->get("http://friends.walla.co.il/?tsscript=login&theme=&ReturnURL=http://newaddress.walla.co.il/ts.cgi",true);
 		if ($this->checkResponse('initial_get',$res))
 			$this->updateDebugBuffer('initial_get',"http://www.gawab.com/default.php",'GET');
 		else 
@@ -62,7 +68,7 @@ class walla extends openinviter_base
 
 		$form_action="http://friends.walla.co.il/";
 		$post_elements=array('w'=>'/@login.commit',
-							'ReturnURL'=>'http://mail.walla.co.il/index.cgi',
+							 'ReturnURL'=>'http://newaddress.walla.co.il/ts.cgi',
 							 'username'=>$user,
 							 'password'=>$pass
 							 );
@@ -111,13 +117,16 @@ class walla extends openinviter_base
 		
 		$contacts=array();
 		$doc=new DOMDocument();libxml_use_internal_errors(true);if (!empty($res)) $doc->loadHTML($res);libxml_use_internal_errors(false);
-		$xpath=new DOMXPath($doc);$query="//a";$data=$xpath->query($query);
+		$xpath=new DOMXPath($doc);$query="//tr[@class='wList1']";$data=$xpath->query($query);
 		foreach($data as $node)
 			{
-			if (strpos($node->getAttribute('href'),'@view')!==false) $name=$node->nodeValue;
-			if (strpos($node->getAttribute('href'),'w=/@compose')!==false) $email=$node->nodeValue;
-			if (!empty($email))
-				$contacts[$email]=array('first_name'=>(!empty($name)?$name:false),'email_1'=>$email);
+				$name = '';
+				$email = '';	
+				$name = $node->childNodes->item(2)->nodeValue;
+				$email = $node->childNodes->item(3)->nodeValue;
+	
+				if (!empty($email))
+					$contacts[$email]=array('first_name'=>(!empty($name)?$name:false),'email_1'=>$email);
 			}
 		
 		foreach ($contacts as $email=>$name) if (!$this->isEmail($email)) unset($contacts[$email]);
