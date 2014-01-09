@@ -1,10 +1,10 @@
 <?php
 	$openinviter_settings=array(
-		"username"=>"srajbr",
-		"private_key"=>"dee4caa279d932b18cd7cda8d2d605e4",
+		"username"=>"OI_USERNAME", // Get it from OpenInviter.com
+		"private_key"=>"OI_PRIVATE_KEY", // Get it from OpenInviter.com
 		"cookie_path"=>'/tmp',
-		"message_body"=>"You are invited to madroids.com", // madroids.com is the website on your account. If wrong, please update your account at OpenInviter.com
-		"message_subject"=>" is inviting you to madroids.com", // madroids.com is the website on your account. If wrong, please update your account at OpenInviter.com
+		"message_body"=>"You are invited to OpenInviter.com", // the website on your account. If wrong, please update your account at OpenInviter.com
+		"message_subject"=>" is inviting you to OpenInviter.com", // the website on your account. If wrong, please update your account at OpenInviter.com
 		"transport"=>"curl", //Replace "curl" with "wget" if you would like to use wget instead
 		"local_debug"=>"on_error", //Available options: on_error => log only requests containing errors; always => log all requests; false => don`t log anything
 		"remote_debug"=>FALSE, //When set to TRUE OpenInviter sends debug information to our servers. Set it to FALSE to disable this feature
